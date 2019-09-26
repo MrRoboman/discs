@@ -3,7 +3,8 @@ extends Node2D
 func _ready():
 	pass
 
-#func _physics_process(delta):
+func _physics_process(delta):
+	pass
 
 func _on_GameArea_input_event(viewport, event, shape_idx):
 	if event is InputEventScreenTouch or event is InputEventScreenDrag:

@@ -1,26 +1,34 @@
 extends 'res://scripts/CircleCollider.gd'
 
+export (int) var radius setget radius_set
+
 var last_position
 var touch_index
 var grabbed_offset
 
+func radius_set(new_radius):
+	radius = new_radius
+	if $CollisionShape2D:
+		$CollisionShape2D.shape.set('radius', new_radius)
+	update()
+
+func _ready():
+	$CollisionShape2D.shape.set('radius', radius)
+
 func _draw():
 	if $CollisionShape2D.disabled:
-		draw_circle(Vector2(), $CollisionShape2D.shape.get('radius'), Color(1,0,0,.5))
+		draw_circle(Vector2(), radius, Color(1,0,0,.5))
 	else:
-		draw_circle(Vector2(), $CollisionShape2D.shape.get('radius'), Color(1,0,0))
-
-
-func get_radius():
-	return $CollisionShape2D.shape.get('radius')
+		draw_circle(Vector2(), radius, Color(1,0,0))
 
 
 func _unhandled_input(event):
 	if event is InputEventScreenTouch:
 		if event.is_pressed() and not touch_index:
+			print('%s: %s' % [name, $CollisionShape2D.shape.get('radius')])
 #			print('press')
 #			print(event.index)
-			if position.distance_to(event.position) <= get_radius():
+			if position.distance_to(event.position) <= radius:
 				touch_index = event.index
 				grabbed_offset = event.position
 				velocity = Vector2()
@@ -52,4 +60,5 @@ func _physics_process(delta):
 	if position.x < 0 or position.x > screen_size.x or position.y < 0 or position.y > screen_size.y:
 		position = screen_size * .5
 		velocity = Vector2()
+
 

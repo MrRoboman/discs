@@ -1,0 +1,44 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://scenes/VariableControl.gd" type="Script" id=1]
+[ext_resource path="res://assets/fonts/Roboto-Black.ttf" type="DynamicFontData" id=2]
+
+[sub_resource type="DynamicFont" id=1]
+size = 32
+font_data = ExtResource( 2 )
+
+[sub_resource type="DynamicFont" id=2]
+size = 64
+font_data = ExtResource( 2 )
+
+[node name="VariableControl" type="Control"]
+margin_right = 677.0
+margin_bottom = 165.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="LineEdit" type="LineEdit" parent="."]
+margin_right = 111.0
+margin_bottom = 57.0
+rect_scale = Vector2( 2, 2 )
+custom_fonts/font = SubResource( 1 )
+text = "9999"
+clear_button_enabled = true
+
+[node name="Label" type="Label" parent="."]
+margin_left = 248.872
+margin_top = 10.7592
+margin_right = 679.872
+margin_bottom = 100.759
+custom_fonts/font = SubResource( 2 )
+text = "some_variable"
+
+[node name="HSlider" type="HSlider" parent="."]
+margin_left = -1.0
+margin_top = 134.0
+margin_right = 664.0
+margin_bottom = 150.0
+ticks_on_borders = true
+[connection signal="text_changed" from="LineEdit" to="." method="_on_LineEdit_text_changed"]

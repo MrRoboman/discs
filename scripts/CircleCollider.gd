@@ -1,6 +1,6 @@
 extends KinematicBody2D
 
-export var mass = 10
+export (float) var mass = 10
 export var drag = .99
 export var spring = 1
 var acceleration = Vector2()
