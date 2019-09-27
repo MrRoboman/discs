@@ -25,7 +25,7 @@ func _draw():
 func _unhandled_input(event):
 	if event is InputEventScreenTouch:
 		if event.is_pressed() and not touch_index:
-			print('%s: %s' % [name, $CollisionShape2D.shape.get('radius')])
+#			print('%s: %s' % [name, $CollisionShape2D.shape.get('radius')])
 #			print('press')
 #			print(event.index)
 			if position.distance_to(event.position) <= radius:
@@ -49,6 +49,7 @@ func _unhandled_input(event):
 		grabbed_offset = event.position
 
 func _physics_process(delta):
+#	print('%s: physics process' % name)
 	last_position = position
 	if grabbed_offset:
 		position = grabbed_offset

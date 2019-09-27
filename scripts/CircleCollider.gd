@@ -6,6 +6,7 @@ export var spring = 1
 var acceleration = Vector2()
 var velocity = Vector2()
 
+signal did_collide
 
 func get_radius():
 	return $CollisionShape2D.shape.get('radius')
@@ -19,8 +20,9 @@ func _handle_movement(delta):
 		velocity = Vector2()
 	var collision = move_and_collide(velocity * delta)
 	if collision:
+		print('%s: collided' % name)
 		velocity = velocity.bounce(collision.normal)
-		
+
 		var other = collision.collider
 		if other.get('mass'):
 			var k = position - other.position
