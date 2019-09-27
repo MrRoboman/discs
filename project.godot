@@ -13,9 +13,21 @@ _global_script_classes=[ {
 "class": "Circle",
 "language": "GDScript",
 "path": "res://scripts/Circle.gd"
+}, {
+"base": "Node2D",
+"class": "Game",
+"language": "GDScript",
+"path": "res://scripts/Game.gd"
+}, {
+"base": "Control",
+"class": "VariableControl",
+"language": "GDScript",
+"path": "res://scripts/VariableControl.gd"
 } ]
 _global_script_class_icons={
-"Circle": ""
+"Circle": "",
+"Game": "",
+"VariableControl": ""
 }
 
 [application]

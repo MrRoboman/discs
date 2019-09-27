@@ -1,4 +1,5 @@
 extends Node2D
+class_name Game
 
 onready var screen_size = get_viewport_rect().size
 var rng = RandomNumberGenerator.new()
@@ -6,12 +7,12 @@ var rng = RandomNumberGenerator.new()
 var velocity_clamp = 10
 var circles = []
 
+signal created_circle
 
-	
 func _ready():
 	rng.randomize()
-	create_circle(Vector2(560,2000), Vector2(0, -1000), 99)
-	create_circle(Vector2(450,800), Vector2(0, 000))
+	create_circle(Vector2(screen_size.x * 0.5, 500), Vector2(0, 0))
+	create_circle(Vector2(screen_size.x * 0.5, screen_size.y - 500), Vector2(0, 0))
 #	for i in range(1):
 #		create_circle()
 
@@ -21,6 +22,9 @@ func _unhandled_input(event):
 		if event.is_pressed():
 ##			print('press')
 ##			print(event.index)
+			# Turn on Debug
+			if event.index == 4 or event.position.distance_to(Vector2()) < 20:
+				$Debug/ControlPanel.toggle()
 			for c in circles:
 				c.grab_if_possible(event)
 		else:
@@ -169,3 +173,4 @@ func create_circle(position = null, velocity = Vector2(), mass = null):
 		circle.mass = mass
 	add_child(circle)
 	circles.push_back(circle)
+	emit_signal("created_circle", circle)

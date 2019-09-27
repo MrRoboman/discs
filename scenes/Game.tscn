@@ -1,135 +1,19 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://scripts/Game.gd" type="Script" id=1]
-[ext_resource path="res://scenes/Goal.tscn" type="PackedScene" id=2]
-[ext_resource path="res://scenes/Ball.tscn" type="PackedScene" id=3]
-[ext_resource path="res://scenes/Disc.tscn" type="PackedScene" id=4]
-[ext_resource path="res://scenes/VariableControl.tscn" type="PackedScene" id=5]
-[ext_resource path="res://scripts/VariableDisplay.gd" type="Script" id=6]
-
-[sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 1024, 1366 )
-
-[sub_resource type="RectangleShape2D" id=2]
-extents = Vector2( 1024, 500 )
-
-[sub_resource type="RectangleShape2D" id=3]
-extents = Vector2( 10, 1377 )
-
-[sub_resource type="RectangleShape2D" id=4]
-extents = Vector2( 1024, 10 )
+[ext_resource path="res://scripts/VariableDisplay.gd" type="Script" id=2]
+[ext_resource path="res://scenes/ControlPanel.gd" type="Script" id=3]
 
 [node name="Game" type="Node2D"]
 script = ExtResource( 1 )
 
-[node name="TopGoal" parent="." instance=ExtResource( 2 )]
-visible = false
-position = Vector2( 1024, 250 )
-
-[node name="BottomGoal" parent="." instance=ExtResource( 2 )]
-visible = false
-position = Vector2( 1024, 2482 )
-
-[node name="Ball" parent="." instance=ExtResource( 3 )]
-visible = false
-position = Vector2( 1024, 1380.94 )
-collision/safe_margin = 0.1
-mass = 1.0
-
-[node name="TopDisc" parent="." instance=ExtResource( 4 )]
-visible = false
-position = Vector2( 1816.62, 231.386 )
-
-[node name="BottomDisc" parent="." instance=ExtResource( 4 )]
-visible = false
-position = Vector2( 243.693, 2488.62 )
-collision/safe_margin = 0.1
-
-[node name="GameArea" type="Area2D" parent="."]
-editor/display_folded = true
-visible = false
-position = Vector2( 1024, 1366 )
-__meta__ = {
-"_edit_group_": true,
-"_edit_lock_": true
-}
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="GameArea"]
-shape = SubResource( 1 )
-
-[node name="BottomArea" type="Area2D" parent="."]
-editor/display_folded = true
-visible = false
-position = Vector2( 1024, 2232 )
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="BottomArea"]
-shape = SubResource( 2 )
-
-[node name="LeftWall" type="StaticBody2D" parent="."]
-editor/display_folded = true
-visible = false
-position = Vector2( 0, 1377 )
-__meta__ = {
-"_edit_group_": true,
-"_edit_lock_": true
-}
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="LeftWall"]
-shape = SubResource( 3 )
-
-[node name="RightWall" type="StaticBody2D" parent="."]
-editor/display_folded = true
-visible = false
-position = Vector2( 2052.93, 1367.15 )
-__meta__ = {
-"_edit_group_": true,
-"_edit_lock_": true
-}
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="RightWall"]
-shape = SubResource( 3 )
-
-[node name="TopWall" type="StaticBody2D" parent="."]
-editor/display_folded = true
-visible = false
-position = Vector2( 1019.08, -3.93066 )
-__meta__ = {
-"_edit_group_": true,
-"_edit_lock_": true
-}
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="TopWall"]
-shape = SubResource( 4 )
-
-[node name="BottomWall" type="StaticBody2D" parent="."]
-editor/display_folded = true
-visible = false
-position = Vector2( 1031.39, 2733.32 )
-__meta__ = {
-"_edit_group_": true,
-"_edit_lock_": true
-}
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="BottomWall"]
-shape = SubResource( 4 )
-
 [node name="Debug" type="CanvasLayer" parent="."]
 
-[node name="VariableControl" parent="Debug" instance=ExtResource( 5 )]
-visible = false
-margin_left = 174.885
-margin_top = 539.029
-margin_right = 851.885
-margin_bottom = 704.029
-instance_path = NodePath("../../BottomDisc")
-variable_name = "radius"
-
 [node name="VariableDisplay" type="Node2D" parent="Debug"]
-script = ExtResource( 6 )
-[connection signal="body_entered" from="TopGoal" to="." method="_on_TopGoal_body_entered"]
-[connection signal="body_entered" from="BottomGoal" to="." method="_on_BottomGoal_body_entered"]
-[connection signal="input_event" from="GameArea" to="." method="_on_GameArea_input_event"]
-[connection signal="input_event" from="BottomArea" to="BottomDisc" method="_on_BottomArea_input_event"]
+visible = false
+script = ExtResource( 2 )
+
+[node name="ControlPanel" type="Control" parent="Debug"]
+visible = false
+script = ExtResource( 3 )
+[connection signal="created_circle" from="." to="Debug/ControlPanel" method="_on_Game_created_circle"]

@@ -5,29 +5,34 @@ var debug_properties: Array = [
 	'radius',
 	'mass',
 	'drag',
-	'acceleration',
-	'velocity',
 	'release_factor',
-	'grabbed',
-	'grabbed_offset',
-	'finger_position',
-	'touch_index',
-	'last_position',
-	'position',
+#	'acceleration',
+#	'velocity',
+#	'release_factor',
+#	'grabbed',
+#	'grabbed_offset',
+#	'finger_position',
+#	'touch_index',
+#	'last_position',
+#	'position',
 ]
 
 export var color = '#ff0000'
-export var radius = 100.0
+export var radius = 100.0 setget radius_set
 export var mass = 100.0
 export var drag = 0.8
+export var release_factor = 40.0
 export var acceleration = Vector2()
 export var velocity = Vector2()
-export var release_factor = 40.0
 var grabbed = false
 var grabbed_offset = Vector2()
 var finger_position = Vector2()
 var touch_index = -1
 var last_position = Vector2()
+
+func radius_set(new_radius):
+	radius = new_radius
+	update()
 
 func _ready():
 	pass

@@ -23,10 +23,9 @@ func get_label(node: Circle) -> Label:
 	var label: Label = labels.get(node.name)
 	if !label:
 		label = load('res://scenes/Control/DebugLabel.tscn').instance()
+		label.add_color_override('font_color', Color(0,1,0))
 		labels[node.name] = label
 		add_child(label)
-		if node.get_script() and node.name == 'Circle':
-			print(node.get_script().get_property_list())
 	return label
 
 func position_label(node: Circle) -> void:
@@ -38,9 +37,10 @@ func write_label(node: Circle) -> void:
 	if !node || !node.get('debug_properties'):
 		return
 	var label: Label = get_label(node)
-	var text: String = ''
+	var text: String = '%s\n' % node.name	
 	for property in node.debug_properties:
 		text = '%s%s: %s\n' % [text, property, node.get(property)]
+	
 	label.text = text
 		
 	
