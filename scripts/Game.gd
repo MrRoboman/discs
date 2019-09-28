@@ -10,9 +10,33 @@ var circles = []
 signal created_circle
 
 func _ready():
+	randomize()
 	rng.randomize()
-	create_circle(Vector2(screen_size.x * 0.5, 500), Vector2(0, 0))
-	create_circle(Vector2(screen_size.x * 0.5, screen_size.y - 500), Vector2(0, 0))
+	# Small Red
+	create_circle({
+		'position': Vector2(screen_size.x * 0.5, 500),
+	})
+	# Small Red
+	create_circle({
+		'position': Vector2(screen_size.x * 0.5, screen_size.y - 500),
+	})
+	# White Ball
+	create_circle({
+		'grabbable': false,
+		'position': screen_size * 0.5,
+		'color': '#ffffff',
+		'radius': 50,
+		'mass': 50,
+	})
+	# Big Blue
+	create_circle({
+		'position': Vector2(randf() * screen_size.x, randf() * screen_size.y),
+		'color': '#0000ff',
+		'radius': 300,
+		'mass': 600,
+		'drag': 1,
+		'release_factor': 10,
+	})
 #	for i in range(1):
 #		create_circle()
 
@@ -20,20 +44,16 @@ func _ready():
 func _unhandled_input(event):
 	if event is InputEventScreenTouch:
 		if event.is_pressed():
-##			print('press')
-##			print(event.index)
-			# Turn on Debug
 			if event.index == 4 or event.position.distance_to(Vector2()) < 20:
 				$Debug/ControlPanel.toggle()
+			
 			for c in circles:
 				c.grab_if_possible(event)
-		else:
+		else: # Unpressed
 			for c in circles:
 				c.release(event)
 
 	if event is InputEventScreenDrag:
-##		print('drag')
-##		print(event.index)
 		for c in circles:
 			c.move(event)
 
@@ -53,21 +73,36 @@ func handle_circle_logic(delta):
 			c.position = c.finger_position + c.grabbed_offset
 			var velocity_on_last_frame = (c.position - last_position) * c.release_factor
 			c.velocity = (c.velocity + velocity_on_last_frame) / 2
-			print(c.velocity)
 		else:
 			c.acceleration = -c.velocity * c.drag
 			c.velocity += c.acceleration * delta
 			c.position += c.velocity * delta
 			
 			# Wrap circle that go off screen
-			if c.position.x < 0:
-				c.position.x += screen_size.x
-			if c.position.x > screen_size.x:
-				c.position.x -= screen_size.x
-			if c.position.y < 0:
-				c.position.y += screen_size.y
-			if c.position.y > screen_size.y:
-				c.position.y -= screen_size.y
+#			if c.position.x < 0:
+#				c.position.x += screen_size.x
+#			if c.position.x > screen_size.x:
+#				c.position.x -= screen_size.x
+#			if c.position.y < 0:
+#				c.position.y += screen_size.y
+#			if c.position.y > screen_size.y:
+#				c.position.y -= screen_size.y
+
+			# Bounce off screen edge
+			# NOTE: changing velocity here feels like no-no
+			var wall_circle
+			if c.position.x - c.radius < 0:
+				c.position.x = c.radius
+				c.velocity.x = -c.velocity.x
+			if c.position.x + c.radius > screen_size.x:
+				c.position.x = screen_size.x - c.radius
+				c.velocity.x = -c.velocity.x
+			if c.position.y - c.radius < 0:
+				c.position.y = c.radius
+				c.velocity.y = -c.velocity.y
+			if c.position.y + c.radius > screen_size.y:
+				c.position.y = screen_size.y - c.radius
+				c.velocity.y = -c.velocity.y
 			
 			# Clamp velocity near zero
 			if (c.velocity.length() < velocity_clamp):
@@ -162,15 +197,15 @@ func _on_BottomGoal_body_entered(body):
 func get_random_position():
 	return Vector2(rng.randi_range(0, screen_size.x), rng.randi_range(0, screen_size.y))
 
-func create_circle(position = null, velocity = Vector2(), mass = null):
+func new_circle(props:Dictionary = {}) -> Circle:
 	var circle = load('res://scenes/Circle.tscn').instance()
-	if position != null:
-		circle.position = position
-	else:
-		circle.position = get_random_position()
-	circle.velocity = velocity
-	if mass != null:
-		circle.mass = mass
+	for key in props.keys():
+		var val = props[key]
+		circle.set(key, val)
+	return circle
+
+func create_circle(props:Dictionary = {}):
+	var circle:Circle = new_circle(props)
 	add_child(circle)
 	circles.push_back(circle)
 	emit_signal("created_circle", circle)
