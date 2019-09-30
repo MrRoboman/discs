@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://scripts/Game.gd" type="Script" id=1]
 [ext_resource path="res://scripts/VariableDisplay.gd" type="Script" id=2]
@@ -8,6 +8,9 @@
 [sub_resource type="DynamicFont" id=1]
 size = 240
 font_data = ExtResource( 4 )
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 1024, 200 )
 
 [node name="Game" type="Node2D"]
 script = ExtResource( 1 )
@@ -51,4 +54,13 @@ rect_rotation = 90.0
 custom_fonts/font = SubResource( 1 )
 custom_colors/font_color = Color( 0.752941, 0.0823529, 0.0823529, 1 )
 text = "0"
+
+[node name="Area2D" type="Area2D" parent="."]
+position = Vector2( 1027.34, 207.523 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource( 2 )
 [connection signal="created_circle" from="." to="Debug/ControlPanel" method="_on_Game_created_circle"]

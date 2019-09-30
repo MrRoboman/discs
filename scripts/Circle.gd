@@ -37,9 +37,41 @@ var finger_position:Vector2 = Vector2()
 var touch_index:int = -1
 var last_position:Vector2 = Vector2()
 
+func left() -> float:
+	return position.x - radius
+	
+func right() -> float:
+	return position.x + radius
+	
+func top() -> float:
+	return position.y - radius
+	
+func bottom() -> float:
+	return position.y + radius
+
+func top_left() -> Vector2:
+	return Vector2(position.x - radius, position.y - radius)
+
+func top_right() -> Vector2:
+	return Vector2(position.x + radius, position.y - radius)
+
+func bottom_left() -> Vector2:
+	return Vector2(position.x - radius, position.y + radius)
+
+func bottom_right() -> Vector2:
+	return Vector2(position.x + radius, position.y + radius)
+
 func color_set(new_color:String) -> void:
 	color = new_color
 	update()
+
+func has_velocity() -> bool:
+	return velocity.x != 0 or velocity.y != 0
+
+func overlaps(other:Circle) -> bool:
+	if left() > other.right() or right() < other.left() or top() > other.bottom() or bottom() < other.top():
+		return false
+	return position.distance_to(other.position) < radius + other.radius
 
 func ball_collide(circle:Circle) -> void:
 	if is_player and circle.is_ball:
@@ -97,7 +129,7 @@ func _process(delta):
 	pass
 	
 func is_within_circle(point:Vector2) -> bool:
-	return position.distance_to(point) <= radius
+	return position.distance_squared_to(point) <= radius * radius
 
 func collect_if_possible() -> void:
 	hide()

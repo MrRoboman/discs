@@ -8,6 +8,8 @@ func _ready():
 	game = $'../..'
 
 func _process(delta):
+	if not visible:
+		return
 	var nodes: Array = game.get_children()
 	for node in nodes:
 		if node is Circle:
