@@ -2,7 +2,7 @@ extends Control
 
 onready var game: Game = $"../.."
 onready var variable_display = $"../VariableDisplay"
-var variable_display_visible
+var variable_display_visible = false
 var x: float = 60
 var y: float = 60
 
@@ -12,11 +12,11 @@ func _ready():
 
 func toggle():
 	visible = !visible
-	if visible:
-		variable_display_visible = variable_display.visible
-		variable_display.visible = true
-	else:
-		variable_display.visible = variable_display_visible
+#	if visible:
+#		variable_display_visible = variable_display.visible
+#		variable_display.visible = true
+#	else:
+#		variable_display.visible = variable_display_visible
 	
 func create_panel(node: Circle) -> void:
 	var label: Label = load('res://scenes/Control/DebugLabel.tscn').instance()
@@ -34,4 +34,5 @@ func create_panel(node: Circle) -> void:
 	
 
 func _on_Game_created_circle(node: Circle):
-	create_panel(node)
+#	create_panel(node)
+	pass

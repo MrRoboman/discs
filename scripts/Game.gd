@@ -7,13 +7,22 @@ onready var screen_size = get_viewport_rect().size
 
 var velocity_clamp = 100 # Compares to velocity.length_squared()
 var circles = []
+var discs = []
+var collisions = []
 
 signal created_circle
 
 var red_score = 0
 var blue_score = 0
-var ball
 var quad_tree
+
+var ball
+var top_disc
+var bottom_disc
+var top_goal
+var bottom_goal
+
+var PLAYER_ZONE = 600
 
 #func _draw():
 #	if quad_tree:
@@ -26,37 +35,91 @@ func _ready():
 	randomize()
 	quad_tree = QuadTree.new().init(screen_size * 0.5, screen_size.x, screen_size.y, circles, 4)
 	
-	# Small Blue
-	create_circle({
-		'position': Vector2(screen_size.x * 0.5 - 50, 300),
-		'radius': 70,
-		'drag': 1,
-		'release_factor': 40,
-		'color': '#0000ff',
-		'is_player': true,
-		'name': 'blue',
+	top_goal = create_circle({
+		'position': Vector2(screen_size.x * 0.5, screen_size.y * 0.15),
+		'og_radius': 194,
+		'color': '#00ffff',
+		'name': 'loon',
+		'is_goal': true,
+		'is_grabbable': false,
+		'texture': "res://assets/plaid.png",
+		'sprite_offset': Vector2(12, 0),
 	})
+	bottom_goal = create_circle({
+		'position': Vector2(screen_size.x * 0.5, screen_size.y * 0.85),
+		'og_radius': 194,
+		'color': '#ff00ff',
+		'name': 'loon',
+		'is_goal': true,
+		'is_grabbable': false,
+		'texture': "res://assets/polkadot.png",
+		'sprite_offset': Vector2(12, 0),
+	})
+	ball = create_circle({
+		'position': screen_size * 0.5,
+		'og_radius': 56,
+		'color': '#ffffff',
+		'name': 'ball',
+		'is_ball': true,
+		'is_grabbable': false,
+		'texture': "res://assets/eight.png",
+	})
+	top_disc = create_circle({
+		'position': Vector2(screen_size.x * 0.5, screen_size.y * 0.4),
+		'og_radius': 56,
+		'color': '#ffffff',
+		'name': 'que',
+		'is_slingshot': true,
+		'texture': "res://assets/que.png",
+	})
+	bottom_disc = create_circle({
+		'position': Vector2(screen_size.x * 0.5, screen_size.y * 0.6),
+		'og_radius': 56,
+		'color': '#ffffff',
+		'name': 'que',
+		'is_slingshot': true,
+		'texture': "res://assets/que.png",
+	})
+	var controls = $Debug/ControlPanel/Controls
+	for control in controls.get_children():
+		control.setup()
+	# Small Blue
+#	create_disc({
+#		'position': Vector2(screen_size.x * 0.5 - 50, 300),
+#		'radius': 70,
+#		'drag': 1,
+#		'release_factor': 40,
+#		'color': '#0000ff',
+#		'is_player': true,
+#		'name': 'blue',
+#	})
 
 	# Small Red
-	create_circle({
-		'position': Vector2(screen_size.x * 0.5, screen_size.y - 300),
-		'radius': 70,
-		'drag': 1,
-		'release_factor': 40,
-		'is_player': true,
-		'name': 'red'
-	})
+#	create_disc({
+#		'position': Vector2(screen_size.x * 0.5, screen_size.y - 300),
+#		'radius': 70,
+#		'drag': 1,
+#		'release_factor': 40,
+#		'is_player': true,
+#		'name': 'red'
+#	})
 	# White Ball
-	ball = create_circle({
-		'grabbable': false,
-		'position': screen_size * 0.5,
-#		'position': Vector2(screen_size.x/2, 900),
-		'color': '#ffffff',
-		'radius': 100,
-		'mass': 100,
-		'can_collect': false,
-		'is_ball': true,
-	})
+#	ball = create_disc({
+#		'grabbable': false,
+#		'position': screen_size * 0.5,
+##		'position': Vector2(screen_size.x/2, 900),
+#		'color': '#ffffff',
+#		'radius': 100,
+#		'mass': 100,
+#		'can_collect': false,
+#		'is_ball': true,
+#	})
+	
+#	for x in range(30):
+#		create_disc({
+#			'position': Vector2(randf() * screen_size.x, randf() * screen_size.y),
+#		})
+
 #	create_circle({
 #		'grabbable': false,
 ##		'position': screen_size * 0.5,
@@ -101,14 +164,14 @@ func _ready():
 	# Gems
 #	var margin_x = 300
 #	var margin_y = 500
-#	var rows = 5
-#	var cols = 3
+#	var rows = 8
+#	var cols = 6
 #	var x = margin_x
 #	var y = margin_y
 #	var i = 0
 #	while x < screen_size.x - margin_x:
 #		while y < screen_size.y - margin_y:
-#			create_circle({
+#			create_disc({
 #				'position': Vector2(x,y),
 #				'radius': 30,
 #				'color': '#00ff00',
@@ -156,6 +219,11 @@ func _ready():
 #		x += 250
 #		y = 0
 
+func _draw():
+#	draw_rect(Rect2(0, 0, screen_size.x, PLAYER_ZONE), Color('#5DADE2'))
+#	draw_rect(Rect2(0, screen_size.y - PLAYER_ZONE, screen_size.x, PLAYER_ZONE), Color('#F1948A'))
+	pass
+
 func get_random_position() -> Vector2:
 	return Vector2(randf() * screen_size.x, randf() * screen_size.y)
 
@@ -164,21 +232,56 @@ func _unhandled_input(event):
 		if event.is_pressed():
 			if event.index == 4 or event.position.distance_to(Vector2()) < 20:
 				$Debug/ControlPanel.toggle()
-			
+
+#			create_or_grab_circle(event)
 			for c in circles:
 				c.grab_if_possible(event)
+			
+#			ball.velocity = (bottom_disc.position - ball.position)
 		else: # Unpressed
 			for c in circles:
 				c.release(event)
+				pass
 
 	if event is InputEventScreenDrag:
+		var moved_circle
 		for c in circles:
-			c.move(event)
+			moved_circle = c.move(event)
+#			if moved_circle and not (point_in_rect(event.position, get_bottom_zone()) or point_in_rect(event.position, get_top_zone())):
+#				moved_circle.release(event)
 
+func point_in_rect(vec2, rect):
+	return vec2.x > rect.position.x and vec2.x < rect.end.x and vec2.y > rect.position.y and vec2.y < rect.end.y
+
+func handle_rect_tap(event):
+	if event.position.y > $BottomArea.position.y - $BottomArea/CollisionShape2D.shape.get('extents').y:
+		var can_create = true
+		for c in circles:
+			if c.position.y + c.radius > $BottomArea.position.y - $BottomArea/CollisionShape2D.shape.get('extents').y:
+				c.grab_if_possible(event)
+				can_create = false
+		
+		if can_create:
+			var circle = create_circle({
+				'position': event.position,
+				'radius': 70,
+				'drag': 1,
+				'release_factor': 60,
+				'is_player': true,
+				'name': 'red',
+			})
+			circle.grab_if_possible(event)
 
 func _physics_process(delta):
 	handle_circle_logic(delta)
 	pass
+
+func get_circle_rect(circle):
+	return Rect2(circle.position.x - circle.radius, circle.position.y - circle.radius, circle.radius * 2, circle.radius * 2)
+	
+func circle_in_zone(circle, rect):
+	var circle_rect = get_circle_rect(circle)
+	return circle_rect.position.x < rect.end.x and circle_rect.end.x > rect.position.x and circle_rect.position.y < rect.end.y and circle_rect.end.y > rect.position.y 
 	
 var top_speed = Vector2()
 func handle_circle_logic(delta):
@@ -196,6 +299,10 @@ func handle_circle_logic(delta):
 			c.velocity += c.acceleration * delta
 			c.position += c.velocity * delta
 			
+#			if not c.in_play:
+#				if not (circle_in_zone(c, get_top_zone()) or circle_in_zone(c, get_bottom_zone())):
+#					c.in_play = true
+			
 			# Wrap circle that go off screen
 #			if c.position.x < 0:
 #				c.position.x += screen_size.x
@@ -208,18 +315,27 @@ func handle_circle_logic(delta):
 
 			# Bounce off screen edge
 			# NOTE: changing velocity here feels like no-no
+			
 			if c.position.x - c.radius < 0:
 				c.position.x = c.radius
 				c.velocity.x = -c.velocity.x
 			if c.position.x + c.radius > screen_size.x:
 				c.position.x = screen_size.x - c.radius
 				c.velocity.x = -c.velocity.x
-			if c.position.y - c.radius < 0:
-				c.position.y = c.radius
-				c.velocity.y = -c.velocity.y
-			if c.position.y + c.radius > screen_size.y:
-				c.position.y = screen_size.y - c.radius
-				c.velocity.y = -c.velocity.y
+			if c.in_play:
+				if c.position.y - c.radius < get_top_zone().end.y:
+					c.position.y = get_top_zone().end.y + c.radius
+					c.velocity.y = -c.velocity.y
+				if c.position.y + c.radius > get_bottom_zone().position.y:
+					c.position.y = get_bottom_zone().position.y - c.radius
+					c.velocity.y = -c.velocity.y
+			else:
+				if c.position.y - c.radius < 0:
+					c.position.y = c.radius
+					c.velocity.y = -c.velocity.y
+				if c.position.y + c.radius > screen_size.y:
+					c.position.y = screen_size.y - c.radius
+					c.velocity.y = -c.velocity.y
 			
 			# Clamp velocity near zero
 			if (c.velocity.length_squared() < velocity_clamp):
@@ -231,8 +347,8 @@ func handle_circle_logic(delta):
 	var circle_groups = quad_tree.get_node_groups()
 	for circle_group in circle_groups:
 		for c1 in circle_group:
-			if c1.velocity.x == 0 and c1.velocity.y == 0:
-				continue
+#			if c1.velocity.x == 0 and c1.velocity.y == 0:
+#				continue
 			for c2 in circle_group:
 #				checks += 1
 				# Visibility stuff is temp for collectibles (maybe?)
@@ -241,23 +357,26 @@ func handle_circle_logic(delta):
 	#				var distance_between_circles = distance_vector.length()
 	#				var radii = c1.radius + c2.radius
 	#				var circles_overlap = distance_between_circles < radii
+#					if c1.overlaps_goal(c2):
+#						print('win')
+#						continue
+					
 					if (c1.has_velocity() or c2.has_velocity()) and c1.overlaps(c2):
 						# Ball stuff
 						c1.ball_collide(c2)
 						
 						# Collectibles
-						var collected:bool = c1.collect(c2)
-						if collected:
-							if ball.color == '#ff0000':
-								red_score += 1
-								$CanvasLayer/RedLabel.text = String(red_score)
-							if ball.color == '#0000ff':
-								blue_score += 1
-								$CanvasLayer/BlueLabel.text = String(blue_score)
-							continue
+#						var collected:bool = c1.collect(c2)
+#						if collected:
+#							if ball.color == '#ff0000':
+#								red_score += 1
+#								$CanvasLayer/RedLabel.text = String(red_score)
+#							if ball.color == '#0000ff':
+#								blue_score += 1
+#								$CanvasLayer/BlueLabel.text = String(blue_score)
+#							continue
 						
-						if not c1.grabbed and not c2.grabbed:
-							colliding_pairs.push_back([c1, c2])
+						colliding_pairs.push_back([c1, c2])
 						
 						# Displace balls away from collision
 						var distance_vector = c1.position - c2.position
@@ -265,14 +384,16 @@ func handle_circle_logic(delta):
 						var overlap = 0.5 * (distance_between_circles - c1.radius - c2.radius)
 						var displacement = overlap * distance_vector / distance_between_circles
 						# BUG: adding 1px displacement for c1 because `distance_between_circles < radii` evaluates to true even when the values are equal..
-						if c2.grabbed:
-							c2.grabbed_offset -= displacement
-						else:
-							c1.position -= displacement + displacement.normalized() 
-						if c1.grabbed:
-							c1.grabbed_offset -= displacement
-						else:
-							c2.position += displacement
+#						if c2.grabbed:
+#							c2.grabbed_offset -= displacement
+#						else:
+#							c1.position -= displacement + displacement.normalized() 
+#						if c1.grabbed:
+#							c1.grabbed_offset -= displacement
+#						else:
+#							c2.position += displacement
+						c1.position -= displacement
+						c2.position += displacement
 	quad_tree.clear()
 #	print(checks)	
 	# Dynamic Collision
@@ -286,8 +407,10 @@ func handle_circle_logic(delta):
 		# Wikipedia maths
 		var k = c1.velocity - c2.velocity
 		var p = 2.0 * (normal.x * k.x + normal.y * k.y) / (c1.mass + c2.mass)
-		c1.velocity -= Vector2(p,p) * c2.mass * normal
-		c2.velocity += Vector2(p,p) * c1.mass * normal
+		if not c1.grabbed:
+			c1.velocity -= Vector2(p,p) * c2.mass * normal
+		if not c2.grabbed:
+			c2.velocity += Vector2(p,p) * c1.mass * normal
 		
 		
 		# OneLoneCoder maths
@@ -354,3 +477,175 @@ func create_circle(props:Dictionary = {}) -> Circle:
 	circles.push_back(circle)
 	emit_signal("created_circle", circle)
 	return circle
+
+func create_disc(props:Dictionary = {}) -> Disc:
+	var disc:Disc = load('res://scenes/Disc.tscn').instance()
+	var fart = 900
+	disc.velocity = Vector2(rand_range(-fart, fart), rand_range(-fart, fart))
+	for key in props.keys():
+		var val = props[key]
+		disc.set(key, val)
+	add_child(disc)
+	discs.push_back(disc)
+	emit_signal("created_disc", disc)
+	return disc
+	
+func handle_disc_collisions():
+	for c in collisions:
+		var c1 = c[0]
+		var collision = c[1]
+		var c2 = collision.collider
+		if c1.get('mass') and c2.get('mass'):
+			var distance = (c1.position - c2.position).length()
+			var normal = (c2.position - c1.position) / distance
+
+			# Wikipedia maths
+			var k = c1.velocity - c2.velocity
+			var p = 2.0 * (normal.x * k.x + normal.y * k.y) / (c1.mass + c2.mass)
+			c1.velocity -= Vector2(p,p) * c2.mass * normal
+			c2.velocity += Vector2(p,p) * c1.mass * normal
+		else:
+			c1.velocity = c1.velocity.bounce(collision.normal)
+	collisions = []
+	
+func add_collision(object, collision):
+	collisions.push_back([object, collision])
+	pass
+
+
+func get_top_zone():
+	return Rect2(0, 0, screen_size.x, PLAYER_ZONE)
+
+func get_bottom_zone():
+	return Rect2(0, screen_size.y - PLAYER_ZONE, screen_size.x, PLAYER_ZONE)
+
+func get_in_play_zone():
+	return Rect2(0, PLAYER_ZONE, screen_size.x, screen_size.y - PLAYER_ZONE * 2)
+
+func create_or_grab_circle(event):
+	var top_zone = get_top_zone()
+	var bottom_zone = get_bottom_zone()
+	var zone
+	var color
+	if top_zone.has_point(event.position):
+		zone = top_zone
+		color = '#0088ff'
+	elif bottom_zone.has_point(event.position):
+		zone = bottom_zone
+		color = '#ff0000'
+	
+	if zone:
+		for c in circles:
+			if not c.in_play and zone.has_point(c.position):
+				c.grab_if_possible(event)
+				return c
+		var new_circle = create_circle({
+			'position': event.position,
+			'radius': 70,
+			'drag': 1,
+			'release_factor': 60,
+			'is_player': true,
+			'name': 'circle',
+			'color': color,
+		})
+		new_circle.grab_if_possible(event)
+		return new_circle
+	
+	return null
+
+func _on_BottomArea_input_event(viewport, event, shape_idx):
+	if event is InputEventScreenTouch:
+		if event.is_pressed():
+			if event.index == 4 or event.position.distance_to(Vector2()) < 20:
+				$Debug/ControlPanel.toggle()
+			
+			var can_create = true
+			var grabbed_circle
+			for c in circles:
+				if c.position.y + c.radius > $BottomArea.position.y - $BottomArea/CollisionShape2D.shape.get('extents').y:
+					c.grab_if_possible(event)
+					can_create = false
+			
+			if can_create:
+				var circle = create_circle({
+					'position': event.position,
+					'radius': 70,
+					'drag': 1,
+					'release_factor': 60,
+					'is_player': true,
+					'name': 'red',
+				})
+				circle.grab_if_possible(event)
+		else: # Unpressed
+			for c in circles:
+				c.release(event)
+
+	if event is InputEventScreenDrag:
+		for c in circles:
+			c.move(event)
+
+
+
+func _on_Button_button_down():
+	top_goal.position = Vector2(screen_size.x * 0.5, screen_size.y * 0.15)
+	top_goal.velocity = Vector2()
+	top_goal.health = top_goal.max_health
+	
+	bottom_goal.position = Vector2(screen_size.x * 0.5, screen_size.y * 0.85)
+	bottom_goal.velocity = Vector2()
+	bottom_goal.health = bottom_goal.max_health
+	
+	ball.position = screen_size * 0.5
+	ball.velocity = Vector2()
+	
+	top_disc.position = Vector2(screen_size.x * 0.5, screen_size.y * 0.4)
+	top_disc.velocity = Vector2()
+	
+	bottom_disc.position = Vector2(screen_size.x * 0.5, screen_size.y * 0.6)
+	bottom_disc.velocity = Vector2()
+	
+#	top_goal = create_circle({
+#		'position': Vector2(screen_size.x * 0.5, screen_size.y * 0.15),
+#		'og_radius': 194,
+#		'color': '#00ffff',
+#		'name': 'loon',
+#		'is_goal': true,
+#		'is_grabbable': false,
+#		'texture': "res://assets/plaid.png",
+#		'sprite_offset': Vector2(12, 0),
+#	})
+#	bottom_goal = create_circle({
+#		'position': Vector2(screen_size.x * 0.5, screen_size.y * 0.85),
+#		'og_radius': 194,
+#		'color': '#ff00ff',
+#		'name': 'loon',
+#		'is_goal': true,
+#		'is_grabbable': false,
+#		'texture': "res://assets/polkadot.png",
+#		'sprite_offset': Vector2(12, 0),
+#	})
+#	ball = create_circle({
+#		'position': screen_size * 0.5,
+#		'og_radius': 56,
+#		'color': '#ffffff',
+#		'name': 'ball',
+#		'is_ball': true,
+#		'is_grabbable': false,
+#		'texture': "res://assets/eight.png",
+#	})
+#	top_disc = create_circle({
+#		'position': Vector2(screen_size.x * 0.5, screen_size.y * 0.4),
+#		'og_radius': 56,
+#		'color': '#ffffff',
+#		'name': 'que',
+#		'is_slingshot': true,
+#		'texture': "res://assets/que.png",
+#	})
+#	bottom_disc = create_circle({
+#		'position': Vector2(screen_size.x * 0.5, screen_size.y * 0.6),
+#		'og_radius': 56,
+#		'color': '#ffffff',
+#		'name': 'que',
+#		'is_slingshot': true,
+#		'texture': "res://assets/que.png",
+#	})

@@ -1,16 +1,22 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://scripts/Game.gd" type="Script" id=1]
 [ext_resource path="res://scripts/VariableDisplay.gd" type="Script" id=2]
 [ext_resource path="res://scenes/ControlPanel.gd" type="Script" id=3]
-[ext_resource path="res://assets/fonts/Roboto-Black.ttf" type="DynamicFontData" id=4]
+[ext_resource path="res://scenes/Control/DebugLabel.tscn" type="PackedScene" id=4]
+[ext_resource path="res://scenes/Control/VariableControl.tscn" type="PackedScene" id=5]
+[ext_resource path="res://assets/fonts/Roboto-Black.ttf" type="DynamicFontData" id=6]
+[ext_resource path="res://assets/background.png" type="Texture" id=7]
 
 [sub_resource type="DynamicFont" id=1]
 size = 240
-font_data = ExtResource( 4 )
+font_data = ExtResource( 6 )
 
 [sub_resource type="RectangleShape2D" id=2]
-extents = Vector2( 1024, 200 )
+extents = Vector2( 1024, 10 )
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 10, 1366 )
 
 [node name="Game" type="Node2D"]
 script = ExtResource( 1 )
@@ -22,12 +28,172 @@ visible = false
 script = ExtResource( 2 )
 
 [node name="ControlPanel" type="Control" parent="Debug"]
+editor/display_folded = true
 visible = false
 script = ExtResource( 3 )
+
+[node name="Labels" type="Node2D" parent="Debug/ControlPanel"]
+
+[node name="8Ball" parent="Debug/ControlPanel/Labels" instance=ExtResource( 4 )]
+margin_left = 713.272
+margin_top = 864.275
+margin_right = 835.272
+margin_bottom = 921.275
+text = "8 Ball"
+
+[node name="Que" parent="Debug/ControlPanel/Labels" instance=ExtResource( 4 )]
+margin_left = 364.023
+margin_top = 1504.2
+margin_right = 450.023
+margin_bottom = 1561.2
+text = "Que"
+
+[node name="Balloon" parent="Debug/ControlPanel/Labels" instance=ExtResource( 4 )]
+margin_left = 1091.92
+margin_top = 1499.36
+margin_right = 1279.92
+margin_bottom = 1556.36
+text = "Balloons"
+
+[node name="Controls" type="Node2D" parent="Debug/ControlPanel"]
+
+[node name="Ball_MaxRadius" parent="Debug/ControlPanel/Controls" instance=ExtResource( 5 )]
+margin_left = 710.065
+margin_top = 942.853
+margin_right = 1387.06
+margin_bottom = 1107.85
+instance_name = "ball"
+prop_name = "max_radius"
+prop_max = 400.0
+
+[node name="Ball_Mass" parent="Debug/ControlPanel/Controls" instance=ExtResource( 5 )]
+margin_left = 708.802
+margin_top = 1076.03
+margin_right = 1385.8
+margin_bottom = 1241.03
+instance_name = "ball"
+prop_name = "mass"
+prop_max = 1000.0
+
+[node name="Ball_Drag" parent="Debug/ControlPanel/Controls" instance=ExtResource( 5 )]
+margin_left = 705.595
+margin_top = 1201.12
+margin_right = 1382.6
+margin_bottom = 1366.12
+instance_name = "ball"
+prop_name = "drag"
+prop_max = 1000.0
+
+[node name="Ball_MaxSpeed" parent="Debug/ControlPanel/Controls" instance=ExtResource( 5 )]
+margin_left = 703.992
+margin_top = 1329.41
+margin_right = 1380.99
+margin_bottom = 1494.41
+instance_name = "ball"
+prop_name = "max_speed"
+prop_max = 1000.0
+
+[node name="Que_MaxRadius" parent="Debug/ControlPanel/Controls" instance=ExtResource( 5 )]
+margin_left = 360.475
+margin_top = 1590.72
+margin_right = 1037.47
+margin_bottom = 1755.72
+instance_name = "que"
+prop_name = "max_radius"
+prop_max = 400.0
+
+[node name="Que_Mass" parent="Debug/ControlPanel/Controls" instance=ExtResource( 5 )]
+margin_left = 360.816
+margin_top = 1717.48
+margin_right = 1037.82
+margin_bottom = 1882.48
+instance_name = "que"
+prop_name = "mass"
+prop_max = 1000.0
+
+[node name="Que_Drag" parent="Debug/ControlPanel/Controls" instance=ExtResource( 5 )]
+margin_left = 360.816
+margin_top = 1847.38
+margin_right = 1037.82
+margin_bottom = 2012.38
+instance_name = "que"
+prop_name = "drag"
+prop_max = 1000.0
+
+[node name="Que_MaxSpeed" parent="Debug/ControlPanel/Controls" instance=ExtResource( 5 )]
+margin_left = 360.816
+margin_top = 1975.67
+margin_right = 1037.82
+margin_bottom = 2140.67
+instance_name = "que"
+prop_name = "max_speed"
+prop_max = 1000.0
+
+[node name="Que_ReleaseFactor" parent="Debug/ControlPanel/Controls" instance=ExtResource( 5 )]
+margin_left = 359.212
+margin_top = 2105.56
+margin_right = 1036.21
+margin_bottom = 2270.56
+instance_name = "que"
+prop_name = "release_factor"
+prop_max = 1000.0
+
+[node name="Loon_MaxRadius" parent="Debug/ControlPanel/Controls" instance=ExtResource( 5 )]
+margin_left = 1093.33
+margin_top = 1581.1
+margin_right = 1770.33
+margin_bottom = 1746.1
+instance_name = "loon"
+prop_name = "max_radius"
+prop_max = 400.0
+
+[node name="Loon_Mass" parent="Debug/ControlPanel/Controls" instance=ExtResource( 5 )]
+margin_left = 1092.07
+margin_top = 1714.28
+margin_right = 1769.07
+margin_bottom = 1879.28
+instance_name = "loon"
+prop_name = "mass"
+prop_max = 1000.0
+
+[node name="Loon_Drag" parent="Debug/ControlPanel/Controls" instance=ExtResource( 5 )]
+margin_left = 1088.86
+margin_top = 1839.36
+margin_right = 1765.86
+margin_bottom = 2004.36
+instance_name = "loon"
+prop_name = "drag"
+prop_max = 1000.0
+
+[node name="Loon_MaxSpeed" parent="Debug/ControlPanel/Controls" instance=ExtResource( 5 )]
+margin_left = 1087.26
+margin_top = 1967.65
+margin_right = 1764.26
+margin_bottom = 2132.65
+instance_name = "loon"
+prop_name = "max_speed"
+prop_max = 1000.0
+
+[node name="Loon_MaxHealth" parent="Debug/ControlPanel/Controls" instance=ExtResource( 5 )]
+margin_left = 1085.65
+margin_top = 2094.34
+margin_right = 1762.65
+margin_bottom = 2259.34
+instance_name = "loon"
+prop_name = "max_health"
+prop_max = 1000.0
+
+[node name="Button" type="Button" parent="Debug/ControlPanel"]
+margin_left = 944.535
+margin_top = 187.624
+margin_right = 1112.54
+margin_bottom = 273.624
+text = "Restart"
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="BlueLabel" type="Label" parent="CanvasLayer"]
+visible = false
 anchor_left = 1.0
 anchor_top = 0.5
 anchor_right = 1.0
@@ -42,6 +208,7 @@ custom_colors/font_color = Color( 0.0352941, 0.180392, 0.682353, 1 )
 text = "0"
 
 [node name="RedLabel" type="Label" parent="CanvasLayer"]
+visible = false
 anchor_left = 1.0
 anchor_top = 0.5
 anchor_right = 1.0
@@ -55,12 +222,54 @@ custom_fonts/font = SubResource( 1 )
 custom_colors/font_color = Color( 0.752941, 0.0823529, 0.0823529, 1 )
 text = "0"
 
-[node name="Area2D" type="Area2D" parent="."]
-position = Vector2( 1027.34, 207.523 )
+[node name="Walls" type="Node2D" parent="."]
+editor/display_folded = true
+
+[node name="TopWall" type="StaticBody2D" parent="Walls"]
+editor/display_folded = true
+position = Vector2( 1024, 0 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/TopWall"]
 shape = SubResource( 2 )
+
+[node name="BottomWall" type="StaticBody2D" parent="Walls"]
+editor/display_folded = true
+position = Vector2( 1024, 2732 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/BottomWall"]
+shape = SubResource( 2 )
+
+[node name="LeftWall" type="StaticBody2D" parent="Walls"]
+editor/display_folded = true
+position = Vector2( 649.468, 1426.94 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/LeftWall"]
+shape = SubResource( 3 )
+
+[node name="RightWall" type="StaticBody2D" parent="Walls"]
+editor/display_folded = true
+position = Vector2( 2048, 1366 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/RightWall"]
+shape = SubResource( 3 )
+
+[node name="Background" type="Sprite" parent="."]
+position = Vector2( 1024, 1366 )
+texture = ExtResource( 7 )
+__meta__ = {
+"_edit_lock_": true
+}
 [connection signal="created_circle" from="." to="Debug/ControlPanel" method="_on_Game_created_circle"]
+[connection signal="button_down" from="Debug/ControlPanel/Button" to="." method="_on_Button_button_down"]
