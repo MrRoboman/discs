@@ -2,6 +2,7 @@ extends Node2D
 class_name Game
 
 #var QuadTree = preload('res://scripts/QuadTree.gd')
+signal created_circle
 
 onready var screen_size = get_viewport_rect().size
 
@@ -9,8 +10,6 @@ var velocity_clamp = 100 # Compares to velocity.length_squared()
 var circles = []
 var discs = []
 var collisions = []
-
-signal created_circle
 
 var red_score = 0
 var blue_score = 0
@@ -21,6 +20,8 @@ var top_disc
 var bottom_disc
 var top_goal
 var bottom_goal
+
+var forward_slingshot = false
 
 var PLAYER_ZONE = 600
 
@@ -35,54 +36,86 @@ func _ready():
 	randomize()
 	quad_tree = QuadTree.new().init(screen_size * 0.5, screen_size.x, screen_size.y, circles, 4)
 	
-	top_goal = create_circle({
-		'position': Vector2(screen_size.x * 0.5, screen_size.y * 0.15),
-		'og_radius': 194,
-		'color': '#00ffff',
-		'name': 'loon',
-		'is_goal': true,
-		'is_grabbable': false,
-		'texture': "res://assets/plaid.png",
-		'sprite_offset': Vector2(12, 0),
-	})
-	bottom_goal = create_circle({
-		'position': Vector2(screen_size.x * 0.5, screen_size.y * 0.85),
-		'og_radius': 194,
-		'color': '#ff00ff',
-		'name': 'loon',
-		'is_goal': true,
-		'is_grabbable': false,
-		'texture': "res://assets/polkadot.png",
-		'sprite_offset': Vector2(12, 0),
-	})
-	ball = create_circle({
+#	top_goal = create_circle({
+#		'position': Vector2(screen_size.x * 0.5, screen_size.y * 0.15),
+#		'og_radius': 194,
+##		'color': '#00ffff',
+#		'name': 'loon',
+#		'is_goal': true,
+#		'is_grabbable': false,
+#		'texture': "res://assets/plaid.png",
+#		'sprite_offset': Vector2(12, 0),
+#	})
+#	top_goal.modulate = Color(1,1,1,0.5)
+#	bottom_goal = create_circle({
+#		'position': Vector2(screen_size.x * 0.5, screen_size.y * 0.85),
+#		'og_radius': 194,
+##		'color': '#ff00ff',
+#		'name': 'loon',
+#		'is_goal': true,
+#		'is_grabbable': false,
+#		'texture': "res://assets/polkadot.png",
+#		'sprite_offset': Vector2(12, 0),
+#	})
+#	bottom_goal.modulate = Color(1,1,1,0.5)
+#	create_circle({
+#		'position':  Vector2(screen_size.x * randf(), screen_size.y * randf()),
+#		'og_radius': 100,
+#		'color': '#00ff00',
+#		'name': 'powerup',
+#		'is_powerup': true,
+#	})
+#	create_circle({
+#		'position':  Vector2(screen_size.x * randf(), screen_size.y * randf()),
+#		'og_radius': 100,
+#		'color': '#ff0000',
+#		'name': 'powerup',
+#		'is_powerdown': true,
+#	})
+#	create_circle({
+#		'position':  Vector2(screen_size.x * randf(), screen_size.y * randf()),
+#		'og_radius': 100,
+#		'color': '#ffffff',
+#		'name': 'powerup',
+#		'is_neutral': true,
+#	})
+#	ball = create_circle({
+#		'position': screen_size * 0.5,
+#		'og_radius': 56,
+##		'color': '#ffffff',
+#		'name': 'ball',
+#		'is_ball': true,
+#		'is_grabbable': false,
+#		'texture': "res://assets/eight.png",
+#	})
+	top_disc = create_circle({
+#		'position': Vector2(screen_size.x * 0.5, screen_size.y * 0.4),
+#		'position':  Vector2(screen_size.x * randf(), screen_size.y * randf()),
 		'position': screen_size * 0.5,
 		'og_radius': 56,
-		'color': '#ffffff',
-		'name': 'ball',
-		'is_ball': true,
-		'is_grabbable': false,
-		'texture': "res://assets/eight.png",
-	})
-	top_disc = create_circle({
-		'position': Vector2(screen_size.x * 0.5, screen_size.y * 0.4),
-		'og_radius': 56,
+		'max_radius': 150,
 		'color': '#ffffff',
 		'name': 'que',
-		'is_slingshot': true,
-		'texture': "res://assets/que.png",
+#		'is_slingshot': true,
+		'release_factor': 120,
+		'texture': "res://assets/cue_plaid.png",
+		'drag': .1,
 	})
-	bottom_disc = create_circle({
-		'position': Vector2(screen_size.x * 0.5, screen_size.y * 0.6),
-		'og_radius': 56,
-		'color': '#ffffff',
-		'name': 'que',
-		'is_slingshot': true,
-		'texture': "res://assets/que.png",
-	})
+#	bottom_disc = create_circle({
+##		'position': Vector2(screen_size.x * 0.5, screen_size.y * 0.6),
+#		'position':  Vector2(screen_size.x * randf(), screen_size.y * randf()),
+#		'og_radius': 56,
+#		'max_radius': 120,
+##		'color': '#ffffff',
+#		'name': 'que',
+#		'is_slingshot': true,
+#		'texture': "res://assets/cue_polkadot.png",
+#	})
 	var controls = $Debug/ControlPanel/Controls
-	for control in controls.get_children():
-		control.setup()
+#	for control in controls.get_children():
+#		control.setup()
+		
+		
 	# Small Blue
 #	create_disc({
 #		'position': Vector2(screen_size.x * 0.5 - 50, 300),
@@ -364,6 +397,8 @@ func handle_circle_logic(delta):
 					if (c1.has_velocity() or c2.has_velocity()) and c1.overlaps(c2):
 						# Ball stuff
 						c1.ball_collide(c2)
+						c1.powerup_collide(c2)
+						c1.powerdown_collide(c2)
 						
 						# Collectibles
 #						var collected:bool = c1.collect(c2)
@@ -649,3 +684,28 @@ func _on_Button_button_down():
 #		'is_slingshot': true,
 #		'texture': "res://assets/que.png",
 #	})
+
+
+func _on_CheckBox_toggled(button_pressed):
+	forward_slingshot = button_pressed
+
+func overlaps_other_circle(circle):
+	for c in circles:
+		if circle.name != c.name and circle.overlaps(c):
+			return true
+	return false
+
+func _on_PowerupTimer_timeout():
+#	var circle = create_circle({
+#		'position':  Vector2(screen_size.x * randf(), screen_size.y * randf()),
+#		'og_radius': 56,
+#		'color': '#00ff00',
+#		'name': 'powerup',
+#		'is_powerup': true,
+#	})
+#	var attempts = 10
+#	while (overlaps_other_circle(circle) and attempts > 0):
+#		circle.position = Vector2(screen_size.x * randf(), screen_size.y * randf())
+#		attempts -= 1
+	pass
+

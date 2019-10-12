@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://scripts/Game.gd" type="Script" id=1]
 [ext_resource path="res://scripts/VariableDisplay.gd" type="Script" id=2]
@@ -6,16 +6,22 @@
 [ext_resource path="res://scenes/Control/DebugLabel.tscn" type="PackedScene" id=4]
 [ext_resource path="res://scenes/Control/VariableControl.tscn" type="PackedScene" id=5]
 [ext_resource path="res://assets/fonts/Roboto-Black.ttf" type="DynamicFontData" id=6]
-[ext_resource path="res://assets/background.png" type="Texture" id=7]
+[ext_resource path="res://scenes/Arrow.tscn" type="PackedScene" id=7]
+[ext_resource path="res://assets/background_plain.png" type="Texture" id=8]
 
 [sub_resource type="DynamicFont" id=1]
+size = 40
+outline_color = Color( 0.0509804, 0.00392157, 0.00392157, 1 )
+font_data = ExtResource( 6 )
+
+[sub_resource type="DynamicFont" id=2]
 size = 240
 font_data = ExtResource( 6 )
 
-[sub_resource type="RectangleShape2D" id=2]
+[sub_resource type="RectangleShape2D" id=3]
 extents = Vector2( 1024, 10 )
 
-[sub_resource type="RectangleShape2D" id=3]
+[sub_resource type="RectangleShape2D" id=4]
 extents = Vector2( 10, 1366 )
 
 [node name="Game" type="Node2D"]
@@ -35,150 +41,150 @@ script = ExtResource( 3 )
 [node name="Labels" type="Node2D" parent="Debug/ControlPanel"]
 
 [node name="8Ball" parent="Debug/ControlPanel/Labels" instance=ExtResource( 4 )]
-margin_left = 713.272
-margin_top = 864.275
-margin_right = 835.272
-margin_bottom = 921.275
+margin_left = 700.12
+margin_top = 308.628
+margin_right = 822.12
+margin_bottom = 365.628
 text = "8 Ball"
 
 [node name="Que" parent="Debug/ControlPanel/Labels" instance=ExtResource( 4 )]
-margin_left = 364.023
-margin_top = 1504.2
-margin_right = 450.023
-margin_bottom = 1561.2
+margin_left = 350.871
+margin_top = 948.553
+margin_right = 436.871
+margin_bottom = 1005.55
 text = "Que"
 
 [node name="Balloon" parent="Debug/ControlPanel/Labels" instance=ExtResource( 4 )]
-margin_left = 1091.92
-margin_top = 1499.36
-margin_right = 1279.92
-margin_bottom = 1556.36
+margin_left = 1078.77
+margin_top = 943.713
+margin_right = 1266.77
+margin_bottom = 1000.71
 text = "Balloons"
 
 [node name="Controls" type="Node2D" parent="Debug/ControlPanel"]
 
 [node name="Ball_MaxRadius" parent="Debug/ControlPanel/Controls" instance=ExtResource( 5 )]
-margin_left = 710.065
-margin_top = 942.853
-margin_right = 1387.06
-margin_bottom = 1107.85
+margin_left = 696.913
+margin_top = 387.206
+margin_right = 1373.91
+margin_bottom = 552.203
 instance_name = "ball"
 prop_name = "max_radius"
 prop_max = 400.0
 
 [node name="Ball_Mass" parent="Debug/ControlPanel/Controls" instance=ExtResource( 5 )]
-margin_left = 708.802
-margin_top = 1076.03
-margin_right = 1385.8
-margin_bottom = 1241.03
+margin_left = 695.65
+margin_top = 520.383
+margin_right = 1372.65
+margin_bottom = 685.383
 instance_name = "ball"
 prop_name = "mass"
 prop_max = 1000.0
 
 [node name="Ball_Drag" parent="Debug/ControlPanel/Controls" instance=ExtResource( 5 )]
-margin_left = 705.595
-margin_top = 1201.12
-margin_right = 1382.6
-margin_bottom = 1366.12
+margin_left = 692.443
+margin_top = 645.473
+margin_right = 1369.45
+margin_bottom = 810.473
 instance_name = "ball"
 prop_name = "drag"
 prop_max = 1000.0
 
 [node name="Ball_MaxSpeed" parent="Debug/ControlPanel/Controls" instance=ExtResource( 5 )]
-margin_left = 703.992
-margin_top = 1329.41
-margin_right = 1380.99
-margin_bottom = 1494.41
+margin_left = 690.84
+margin_top = 773.763
+margin_right = 1367.84
+margin_bottom = 938.763
 instance_name = "ball"
 prop_name = "max_speed"
 prop_max = 1000.0
 
 [node name="Que_MaxRadius" parent="Debug/ControlPanel/Controls" instance=ExtResource( 5 )]
-margin_left = 360.475
-margin_top = 1590.72
-margin_right = 1037.47
-margin_bottom = 1755.72
+margin_left = 347.323
+margin_top = 1035.07
+margin_right = 1024.32
+margin_bottom = 1200.07
 instance_name = "que"
 prop_name = "max_radius"
 prop_max = 400.0
 
 [node name="Que_Mass" parent="Debug/ControlPanel/Controls" instance=ExtResource( 5 )]
-margin_left = 360.816
-margin_top = 1717.48
-margin_right = 1037.82
-margin_bottom = 1882.48
+margin_left = 347.664
+margin_top = 1161.83
+margin_right = 1024.67
+margin_bottom = 1326.83
 instance_name = "que"
 prop_name = "mass"
 prop_max = 1000.0
 
 [node name="Que_Drag" parent="Debug/ControlPanel/Controls" instance=ExtResource( 5 )]
-margin_left = 360.816
-margin_top = 1847.38
-margin_right = 1037.82
-margin_bottom = 2012.38
+margin_left = 347.664
+margin_top = 1291.73
+margin_right = 1024.67
+margin_bottom = 1456.73
 instance_name = "que"
 prop_name = "drag"
 prop_max = 1000.0
 
 [node name="Que_MaxSpeed" parent="Debug/ControlPanel/Controls" instance=ExtResource( 5 )]
-margin_left = 360.816
-margin_top = 1975.67
-margin_right = 1037.82
-margin_bottom = 2140.67
+margin_left = 347.664
+margin_top = 1420.02
+margin_right = 1024.67
+margin_bottom = 1585.02
 instance_name = "que"
 prop_name = "max_speed"
 prop_max = 1000.0
 
 [node name="Que_ReleaseFactor" parent="Debug/ControlPanel/Controls" instance=ExtResource( 5 )]
-margin_left = 359.212
-margin_top = 2105.56
-margin_right = 1036.21
-margin_bottom = 2270.56
+margin_left = 346.06
+margin_top = 1549.91
+margin_right = 1023.06
+margin_bottom = 1714.91
 instance_name = "que"
 prop_name = "release_factor"
 prop_max = 1000.0
 
 [node name="Loon_MaxRadius" parent="Debug/ControlPanel/Controls" instance=ExtResource( 5 )]
-margin_left = 1093.33
-margin_top = 1581.1
-margin_right = 1770.33
-margin_bottom = 1746.1
+margin_left = 1080.18
+margin_top = 1025.45
+margin_right = 1757.18
+margin_bottom = 1190.45
 instance_name = "loon"
 prop_name = "max_radius"
 prop_max = 400.0
 
 [node name="Loon_Mass" parent="Debug/ControlPanel/Controls" instance=ExtResource( 5 )]
-margin_left = 1092.07
-margin_top = 1714.28
-margin_right = 1769.07
-margin_bottom = 1879.28
+margin_left = 1078.92
+margin_top = 1158.63
+margin_right = 1755.92
+margin_bottom = 1323.63
 instance_name = "loon"
 prop_name = "mass"
 prop_max = 1000.0
 
 [node name="Loon_Drag" parent="Debug/ControlPanel/Controls" instance=ExtResource( 5 )]
-margin_left = 1088.86
-margin_top = 1839.36
-margin_right = 1765.86
-margin_bottom = 2004.36
+margin_left = 1075.71
+margin_top = 1283.71
+margin_right = 1752.71
+margin_bottom = 1448.71
 instance_name = "loon"
 prop_name = "drag"
 prop_max = 1000.0
 
 [node name="Loon_MaxSpeed" parent="Debug/ControlPanel/Controls" instance=ExtResource( 5 )]
-margin_left = 1087.26
-margin_top = 1967.65
-margin_right = 1764.26
-margin_bottom = 2132.65
+margin_left = 1074.11
+margin_top = 1412.0
+margin_right = 1751.11
+margin_bottom = 1577.0
 instance_name = "loon"
 prop_name = "max_speed"
 prop_max = 1000.0
 
 [node name="Loon_MaxHealth" parent="Debug/ControlPanel/Controls" instance=ExtResource( 5 )]
-margin_left = 1085.65
-margin_top = 2094.34
-margin_right = 1762.65
-margin_bottom = 2259.34
+margin_left = 1072.5
+margin_top = 1538.69
+margin_right = 1749.5
+margin_bottom = 1703.69
 instance_name = "loon"
 prop_name = "max_health"
 prop_max = 1000.0
@@ -189,6 +195,21 @@ margin_top = 187.624
 margin_right = 1112.54
 margin_bottom = 273.624
 text = "Restart"
+
+[node name="Checkboxes" type="Node2D" parent="Debug/ControlPanel"]
+
+[node name="CheckBox" type="CheckBox" parent="Debug/ControlPanel/Checkboxes"]
+margin_left = 1517.0
+margin_top = 210.0
+margin_right = 1893.0
+margin_bottom = 290.0
+custom_fonts/font = SubResource( 1 )
+custom_colors/font_color_disabled = Color( 0.0941176, 0.0156863, 0.0156863, 1 )
+custom_colors/font_color_hover_pressed = Color( 0.00392157, 0, 0, 1 )
+custom_colors/font_color = Color( 0.105882, 0.027451, 0.027451, 1 )
+custom_colors/font_color_hover = Color( 0, 0, 0, 1 )
+custom_colors/font_color_pressed = Color( 0.0784314, 0.0156863, 0.0156863, 1 )
+text = "Forward Slingshot"
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -203,7 +224,7 @@ margin_top = -572.601
 margin_right = 151.727
 margin_bottom = -290.601
 rect_rotation = 90.0
-custom_fonts/font = SubResource( 1 )
+custom_fonts/font = SubResource( 2 )
 custom_colors/font_color = Color( 0.0352941, 0.180392, 0.682353, 1 )
 text = "0"
 
@@ -218,58 +239,70 @@ margin_top = 363.991
 margin_right = 141.453
 margin_bottom = 645.991
 rect_rotation = 90.0
-custom_fonts/font = SubResource( 1 )
+custom_fonts/font = SubResource( 2 )
 custom_colors/font_color = Color( 0.752941, 0.0823529, 0.0823529, 1 )
 text = "0"
 
 [node name="Walls" type="Node2D" parent="."]
-editor/display_folded = true
 
 [node name="TopWall" type="StaticBody2D" parent="Walls"]
 editor/display_folded = true
 position = Vector2( 1024, 0 )
 __meta__ = {
-"_edit_group_": true
+"_edit_group_": true,
+"_edit_lock_": true
 }
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/TopWall"]
-shape = SubResource( 2 )
+shape = SubResource( 3 )
+
+[node name="Arrow" parent="Walls/TopWall" instance=ExtResource( 7 )]
+position = Vector2( -204, 1710 )
 
 [node name="BottomWall" type="StaticBody2D" parent="Walls"]
 editor/display_folded = true
 position = Vector2( 1024, 2732 )
 __meta__ = {
-"_edit_group_": true
+"_edit_group_": true,
+"_edit_lock_": true
 }
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/BottomWall"]
-shape = SubResource( 2 )
+shape = SubResource( 3 )
 
 [node name="LeftWall" type="StaticBody2D" parent="Walls"]
 editor/display_folded = true
-position = Vector2( 649.468, 1426.94 )
+position = Vector2( 5.40637, 1355.28 )
 __meta__ = {
-"_edit_group_": true
+"_edit_group_": true,
+"_edit_lock_": true
 }
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/LeftWall"]
-shape = SubResource( 3 )
+shape = SubResource( 4 )
 
 [node name="RightWall" type="StaticBody2D" parent="Walls"]
 editor/display_folded = true
 position = Vector2( 2048, 1366 )
 __meta__ = {
-"_edit_group_": true
+"_edit_group_": true,
+"_edit_lock_": true
 }
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/RightWall"]
-shape = SubResource( 3 )
+shape = SubResource( 4 )
 
 [node name="Background" type="Sprite" parent="."]
 position = Vector2( 1024, 1366 )
-texture = ExtResource( 7 )
+texture = ExtResource( 8 )
 __meta__ = {
 "_edit_lock_": true
 }
+
+[node name="PowerupTimer" type="Timer" parent="."]
+one_shot = true
+autostart = true
 [connection signal="created_circle" from="." to="Debug/ControlPanel" method="_on_Game_created_circle"]
 [connection signal="button_down" from="Debug/ControlPanel/Button" to="." method="_on_Button_button_down"]
+[connection signal="toggled" from="Debug/ControlPanel/Checkboxes/CheckBox" to="." method="_on_CheckBox_toggled"]
+[connection signal="timeout" from="PowerupTimer" to="." method="_on_PowerupTimer_timeout"]

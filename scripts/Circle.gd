@@ -17,10 +17,15 @@ var debug_properties: Array = [
 #	'last_position',
 #	'position',
 ]
+signal kill
+
+onready var Game = $'..'
 
 export var texture:String setget texture_set, texture_get
 export var sprite_offset:Vector2 setget sprite_offset_set, sprite_offset_get
 
+export var is_powerdown:bool = false
+export var is_powerup:bool = false
 export var is_slingshot:bool = false
 export var is_goal:bool = false
 export var is_player:bool = false
@@ -28,7 +33,7 @@ export var is_ball:bool = false
 export var is_collectible:bool = false setget is_collectible_set, is_collectible_get
 export var can_collect:bool = false
 export var is_grabbable:bool = true
-export var color:String = '#ff0000' setget color_set
+export var color:String setget color_set
 export var max_radius:float setget max_radius_set
 export var og_radius:float setget og_radius_set
 export var radius:float = 100.0 setget radius_set
@@ -47,6 +52,7 @@ var last_position:Vector2 = Vector2()
 var in_play = false
 var shrink_factor = 201/ 3
 var can_shrink = true
+var can_grow = true
 export var max_health = 5 setget max_health_set
 export var health = 5 setget health_set
 
@@ -118,15 +124,6 @@ func overlaps(other:Circle) -> bool:
 func overlaps_goal(other):
 	return (is_goal or other.is_goal) and overlaps(other)
 
-func shrink():
-	if can_shrink:
-		can_shrink = false
-		$Timer.start()
-		self.health -= 1
-#		$Sprite.set_scale(Vector2(1,1) * percent_health)
-#		$Sprite.transform.scale = Vector2(1,1) * percent_health
-#		radius -= shrink_factor
-
 func health_set(new_health):
 	health = new_health
 	if max_health == 0:
@@ -147,6 +144,43 @@ func ball_collide(circle:Circle) -> void:
 		var ball:Circle = circle
 		ball.color = color
 		ball.can_collect = true
+
+func powerup_collide(circle):
+	if self.is_powerup:
+		circle.grow()
+		emit_signal("kill", self)
+	elif circle.is_powerup:
+		self.grow()
+		emit_signal("kill", circle)
+
+func powerdown_collide(circle):
+	if self.is_powerdown:
+		circle.shrink()
+	elif circle.is_powerdown:
+		self.shrink()
+
+func shrink():
+	if can_shrink:
+		can_shrink = false
+		$Timer.start()
+		self.health -= 1
+		self.max_radius -= 40
+		radius = max_radius
+		if radius <= 0:
+			hide()
+#		$Sprite.set_scale(Vector2(1,1) * percent_health)
+#		$Sprite.transform.scale = Vector2(1,1) * percent_health
+#		radius -= shrink_factor
+
+func grow():
+	if can_grow:
+		can_grow = false
+		$Timer.start()
+		self.max_radius += 20
+		radius = max_radius
+		if radius <= 0:
+			hide()
+		
 
 func grabbed_offset_set(new_grabbed_offset:Vector2) -> void:
 	grabbed_offset = new_grabbed_offset
@@ -174,6 +208,10 @@ func collect(circle:Circle) -> bool:
 
 func radius_set(new_radius:float) -> void:
 	radius = new_radius
+#	var perc_health = float(health) / max_health
+	var perc_radius = radius / og_radius
+#	self.radius = (perc_health * max_radius)
+	$Sprite.set_scale(Vector2(1.1,1.1) * perc_radius)
 	update()
 
 func mass_set(new_mass:float) -> void:
@@ -192,12 +230,21 @@ func _ready():
 	pass
 
 func _draw():
-#	draw_circle(Vector2(), radius, Color(color))
+	if color:
+		draw_circle(Vector2(), radius, Color(color))
 	if is_slingshot and grabbed:
-		var arrowhead = sling_offset - position # Vector2() + (position - sling_offset)
+		var arrowhead
+		if Game.forward_slingshot:
+			arrowhead = sling_offset - position
+		else:
+			arrowhead = Vector2() + (position - sling_offset)
 		draw_line(Vector2(), arrowhead, Color('#00ff00'), 4)
 		var angle = PI * .05
-		var wing:Vector2 = arrowhead * .8 #-arrowhead * 0.80 * 0.90
+		var wing:Vector2 = arrowhead * .8 
+#		if Game.forward_slingshot:
+#			wing = arrowhead * .8 
+#		else:
+#			wing = -arrowhead * 0.80 * 0.90
 		draw_line(arrowhead, wing.rotated(angle), Color('#00ff00'), 4)
 		draw_line(arrowhead, wing.rotated(-angle), Color('#00ff00'), 4)
 
@@ -227,7 +274,10 @@ func release(event) -> void:
 		grabbed = false
 		touch_index = -1
 		if is_slingshot:
-			velocity = (sling_offset - position) * release_factor # (position - sling_offset) * release_factor
+			if Game.forward_slingshot:
+				velocity = (sling_offset - position) * release_factor
+			else:
+				velocity = (position - sling_offset) * release_factor 
 			update()
 
 
@@ -247,3 +297,4 @@ func move(event:InputEventScreenDrag) -> Circle:
 
 func _on_Timer_timeout():
 	can_shrink = true
+	can_grow = true
