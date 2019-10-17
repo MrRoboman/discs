@@ -2,7 +2,7 @@
 
 [ext_resource path="res://scripts/Game.gd" type="Script" id=1]
 [ext_resource path="res://scripts/VariableDisplay.gd" type="Script" id=2]
-[ext_resource path="res://scenes/ControlPanel.gd" type="Script" id=3]
+[ext_resource path="res://scripts/ControlPanel.gd" type="Script" id=3]
 [ext_resource path="res://scenes/Control/DebugLabel.tscn" type="PackedScene" id=4]
 [ext_resource path="res://scenes/Control/VariableControl.tscn" type="PackedScene" id=5]
 [ext_resource path="res://assets/fonts/Roboto-Black.ttf" type="DynamicFontData" id=6]
@@ -302,7 +302,10 @@ __meta__ = {
 [node name="PowerupTimer" type="Timer" parent="."]
 one_shot = true
 autostart = true
+
+[node name="HTTPRequest" type="HTTPRequest" parent="."]
 [connection signal="created_circle" from="." to="Debug/ControlPanel" method="_on_Game_created_circle"]
 [connection signal="button_down" from="Debug/ControlPanel/Button" to="." method="_on_Button_button_down"]
 [connection signal="toggled" from="Debug/ControlPanel/Checkboxes/CheckBox" to="." method="_on_CheckBox_toggled"]
 [connection signal="timeout" from="PowerupTimer" to="." method="_on_PowerupTimer_timeout"]
+[connection signal="request_completed" from="HTTPRequest" to="." method="_on_HTTPRequest_request_completed"]

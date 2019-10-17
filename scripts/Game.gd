@@ -25,14 +25,36 @@ var forward_slingshot = false
 
 var PLAYER_ZONE = 600
 
+var firebase
+
 #func _draw():
 #	if quad_tree:
 #		var rects = quad_tree.get_rects()
 #		for rect in rects:
 ##			print(rect)
 #			draw_rect(rect, Color(1,1,0,.1))
+func on_request_completed(response):
+#	print(response['games'])
+	var data:Dictionary = response
+	print(data)
+	firebase.disconnect('request_completed', self, 'on_request_completed')
 
 func _ready():
+#	firebase = get_node('/root/Firebase')
+#	firebase.connect('request_completed', self, 'on_request_completed')
+#	firebase.load_data()
+
+#	firebase.load_data($HTTPRequest)
+#	firebase.save_circle($HTTPRequest, {
+#		'name': 'dingle',
+#		'x': 100,
+#		'y': '200',
+#		'is_grabbed': true,
+#	})
+	
+#	firebase.save_circle('Big Boy', {'x':0})
+#	firebase.save_game('SHockey', {'y': 'not'})
+	
 	randomize()
 	quad_tree = QuadTree.new().init(screen_size * 0.5, screen_size.x, screen_size.y, circles, 4)
 	
@@ -88,19 +110,19 @@ func _ready():
 #		'is_grabbable': false,
 #		'texture': "res://assets/eight.png",
 #	})
-	top_disc = create_circle({
+#	top_disc = create_circle({
 #		'position': Vector2(screen_size.x * 0.5, screen_size.y * 0.4),
 #		'position':  Vector2(screen_size.x * randf(), screen_size.y * randf()),
-		'position': screen_size * 0.5,
-		'og_radius': 56,
-		'max_radius': 150,
-		'color': '#ffffff',
-		'name': 'que',
-#		'is_slingshot': true,
-		'release_factor': 120,
-		'texture': "res://assets/cue_plaid.png",
-		'drag': .1,
-	})
+#		'position': screen_size * 0.5,
+#		'og_radius': 56,
+#		'max_radius': 150,
+#		'color': '#ffffff',
+#		'name': 'que',
+##		'is_slingshot': true,
+#		'release_factor': 120,
+#		'texture': "res://assets/cue_plaid.png",
+#		'drag': .1,
+#	})
 #	bottom_disc = create_circle({
 ##		'position': Vector2(screen_size.x * 0.5, screen_size.y * 0.6),
 #		'position':  Vector2(screen_size.x * randf(), screen_size.y * randf()),
@@ -709,3 +731,10 @@ func _on_PowerupTimer_timeout():
 #		attempts -= 1
 	pass
 
+
+
+func _on_HTTPRequest_request_completed(result, response_code, headers, body):
+	print(response_code)
+	var json = JSON.parse(body.get_string_from_utf8())
+	print(json.result)
+	pass # Replace with function body.

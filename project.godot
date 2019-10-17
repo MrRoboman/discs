@@ -14,7 +14,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/Circle.gd"
 }, {
-"base": "KinematicBody2D",
+"base": "Node2D",
 "class": "Disc",
 "language": "GDScript",
 "path": "res://scripts/Disc.gd"
@@ -23,6 +23,11 @@ _global_script_classes=[ {
 "class": "Game",
 "language": "GDScript",
 "path": "res://scripts/Game.gd"
+}, {
+"base": "Node2D",
+"class": "Play",
+"language": "GDScript",
+"path": "res://scenes/Play.gd"
 }, {
 "base": "Node2D",
 "class": "QuadTree",
@@ -38,6 +43,7 @@ _global_script_class_icons={
 "Circle": "",
 "Disc": "",
 "Game": "",
+"Play": "",
 "QuadTree": "",
 "VariableControl": ""
 }
@@ -45,8 +51,12 @@ _global_script_class_icons={
 [application]
 
 config/name="Discs"
-run/main_scene="res://scenes/Game.tscn"
+run/main_scene="res://scenes/Tool.tscn"
 config/icon="res://icon.png"
+
+[autoload]
+
+Firebase="*res://scripts/Firebase.gd"
 
 [display]
 
