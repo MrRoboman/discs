@@ -27,7 +27,7 @@ _global_script_classes=[ {
 "base": "Node2D",
 "class": "Play",
 "language": "GDScript",
-"path": "res://scenes/Play.gd"
+"path": "res://scripts/Play.gd"
 }, {
 "base": "Node2D",
 "class": "QuadTree",
@@ -57,6 +57,7 @@ config/icon="res://icon.png"
 [autoload]
 
 Firebase="*res://scripts/Firebase.gd"
+Tap="*res://scripts/Tap.gd"
 
 [display]
 

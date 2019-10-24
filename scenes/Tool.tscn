@@ -1,9 +1,11 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://scripts/Tool.gd" type="Script" id=1]
-[ext_resource path="res://scenes/Play.gd" type="Script" id=2]
+[ext_resource path="res://scripts/Play.gd" type="Script" id=2]
 [ext_resource path="res://assets/fonts/Roboto-Black.ttf" type="DynamicFontData" id=3]
 [ext_resource path="res://scripts/GameDropdown.gd" type="Script" id=4]
+[ext_resource path="res://scripts/AttributesWindow.gd" type="Script" id=5]
+[ext_resource path="res://scenes/AttributeEdit.tscn" type="PackedScene" id=6]
 
 [sub_resource type="DynamicFont" id=1]
 size = 32
@@ -108,6 +110,27 @@ margin_top = 170.0
 margin_right = 1226.0
 margin_bottom = 310.0
 window_title = "Delete Game?"
+
+[node name="AttributesWindow" type="WindowDialog" parent="UI"]
+visible = true
+margin_left = 1110.0
+margin_top = 408.0
+margin_right = 1950.0
+margin_bottom = 494.0
+window_title = "Disc"
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="AttributeEdit" parent="UI/AttributesWindow" instance=ExtResource( 6 )]
+
+[node name="ToggleUiButton" type="Button" parent="."]
+margin_left = 2020.0
+margin_top = 10.0
+margin_right = 2044.0
+margin_bottom = 30.0
+text = "ui"
 [connection signal="item_selected" from="UI/GameDropdown" to="." method="_on_GameDropdown_item_selected"]
 [connection signal="pressed" from="UI/AddGameButton" to="." method="_on_AddGameButton_pressed"]
 [connection signal="pressed" from="UI/SaveGameButton" to="." method="_on_SaveGameButton_pressed"]
@@ -116,3 +139,5 @@ window_title = "Delete Game?"
 [connection signal="pressed" from="UI/NewGameDialog/NewGameOkButton" to="." method="_on_NewGameOkButton_pressed"]
 [connection signal="text_entered" from="UI/NewGameDialog/NewGameLineEdit" to="." method="_on_NewGameLineEdit_text_entered"]
 [connection signal="confirmed" from="UI/DeleteGameConfirm" to="." method="_on_DeleteGameConfirm_confirmed"]
+[connection signal="value_updated" from="UI/AttributesWindow" to="." method="_on_AttributesWindow_value_updated"]
+[connection signal="pressed" from="ToggleUiButton" to="." method="_on_ToggleUiButton_pressed"]

@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://scripts/AttributeEdit.gd" type="Script" id=1]
+[ext_resource path="res://assets/fonts/Roboto-Black.ttf" type="DynamicFontData" id=2]
+
+[sub_resource type="DynamicFont" id=1]
+size = 64
+font_data = ExtResource( 2 )
+
+[sub_resource type="DynamicFont" id=2]
+size = 64
+font_data = ExtResource( 2 )
+
+[node name="AttributeEdit" type="Panel"]
+margin_right = 840.0
+margin_bottom = 86.0
+script = ExtResource( 1 )
+
+[node name="Label" type="Label" parent="."]
+margin_left = 20.0
+margin_top = 5.0
+margin_right = 299.0
+margin_bottom = 81.0
+custom_fonts/font = SubResource( 1 )
+text = "x"
+
+[node name="LineEdit" type="LineEdit" parent="."]
+margin_left = 570.0
+margin_right = 840.0
+margin_bottom = 86.0
+custom_fonts/font = SubResource( 2 )
+text = "9999999"
